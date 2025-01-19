@@ -1,0 +1,10 @@
+one-jeden
+two-dwa
+three-trzy
+four-cztery
+five-piec
+six-szesc
+seven-siedem
+eight-osiem
+nine-dziewiec
+ten-dziesiec
