@@ -5,7 +5,7 @@ constexpr uint16_t MODE_COUNT = 3;
 #define MODE_RANGE(mode) mode == 0 || mode > MODE_COUNT
 #define BOOL_CHANGE(value) value = !value
 
-void GetWords(const std::string &contents, const char &seperator, std::unordered_map<std::string, std::string> &map) {
+void GetWords(const std::string &contents, const char &seperator, std::vector<std::string> &leftWords, std::vector<std::string> &rightWords) {
     std::string *ptrBuffer;
     std::string leftBuffer;
     std::string rightBuffer;
@@ -21,7 +21,7 @@ void GetWords(const std::string &contents, const char &seperator, std::unordered
             if (side) {
                 // We must have the leftBuffer and rightBuffer full,
                 // so we set the map and clear both buffers
-                map[leftBuffer] = rightBuffer;
+                rightWords.emplace_back(rightBuffer);
 
                 leftBuffer.clear();
                 rightBuffer.clear();
@@ -32,6 +32,7 @@ void GetWords(const std::string &contents, const char &seperator, std::unordered
         }
 
         if (key == seperator) {
+            leftWords.emplace_back(leftBuffer);
             ptrBuffer = &rightBuffer;
             side = true;
             continue;
@@ -40,7 +41,7 @@ void GetWords(const std::string &contents, const char &seperator, std::unordered
         *ptrBuffer += key;
     }
 
-    map[leftBuffer] = rightBuffer;
+    rightWords.emplace_back(rightBuffer);
 }
 
 void SelectMode(uint16_t &mode) {
@@ -57,7 +58,8 @@ void SelectMode(uint16_t &mode) {
 }
 
 int main() {
-    std::unordered_map<std::string, std::string> words;
+    std::vector<std::string> leftWords;
+    std::vector<std::string> rightWords;
     std::string contents;
     uint16_t mode;
     char seperator;
@@ -80,11 +82,7 @@ int main() {
     std::cout << "Enter seperator (single character): ";
     std::cin >> seperator;
 
-    GetWords(contents, seperator, words);
-
-    for (auto it = words.begin(); it != words.end(); it++) {
-        std::cout << it->first << "\t" << it->second << std::endl;
-    }
+    GetWords(contents, seperator, leftWords, rightWords);
 
     return 0;
 }
