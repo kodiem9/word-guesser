@@ -1,6 +1,7 @@
 #include <PCH.hpp>
 
 constexpr uint16_t MODE_COUNT = 3;
+constexpr uint16_t TRIES_COUNT = 4;
 
 namespace Global {
     std::vector<std::string> leftWords;
@@ -69,7 +70,89 @@ void SelectMode() {
     }
 }
 
+void Game() {
+    srand(time(NULL));
+
+    std::vector<std::string> *ptrLeft;
+    std::vector<std::string> *ptrRight;
+    std::string input, question, answer;
+
+    int savedLength = Global::length;
+    int score = TRIES_COUNT;
+    int maxResult = (TRIES_COUNT-1)*savedLength;
+
+    int index = 0, count = 0, result = 0;
+
+    if (Global::mode == 1) {
+        ptrLeft = &Global::leftWords;
+        ptrRight = &Global::rightWords;
+    }
+    else {
+        ptrLeft = &Global::rightWords;
+        ptrRight = &Global::leftWords;
+    }
+
+    while (Global::length > 0) {
+        index = rand() % Global::length;
+        question = (*ptrLeft)[index];
+        answer = (*ptrRight)[index];
+
+        std::cout << question << std::endl;
+        
+        while (score-- > 0) {
+            std::cin >> input;
+
+            if (input != answer) {
+                switch (score) {
+                    case 3: {
+                        std::cout << answer.front();
+                        for (size_t i = 1; i < answer.length(); i++) putchar('*');
+                        break;
+                    }
+
+                    case 2: {
+                        std::cout << answer.front();
+                        for (size_t i = 1; i < answer.length()-1; i++) putchar('*');
+                        std::cout << answer.back();
+                        break;
+                    }
+
+                    case 1: {
+                        std::cout << answer.front() << answer[1];
+                        for (size_t i = 2; i < answer.length()-2; i++) putchar('*');
+                        std::cout << answer[answer.length()-1] << answer.back();
+                        break;
+                    }
+                }
+                
+                std::cout << std::endl;
+            }
+            else { break; }
+        }
+
+        count++;
+        Global::length--;
+
+        if (score > 0)
+            std::cout << "Correct! (";
+        else
+            std::cout << "Wrong! (";
+        
+        std::cout << count << "/" << savedLength << ")" << std::endl << std::endl;
+
+        Global::leftWords.erase(Global::leftWords.begin()+index);
+        Global::rightWords.erase(Global::rightWords.begin()+index);
+
+        result += score;
+        score = TRIES_COUNT;
+    }
+
+    std::cout << std::endl << "Review: " << (float(result)/maxResult)*100 << "%" << std::endl;
+}
+
 int main() {
+    std::cout << std::fixed << std::setprecision(2);
+
     // Reading file data
     {
         std::ifstream file("../data/words.txt");
@@ -89,6 +172,7 @@ int main() {
     std::cin >> Global::seperator;
 
     GetWords();
+    Game();
 
     return 0;
 }
