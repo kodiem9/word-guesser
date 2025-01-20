@@ -79,7 +79,7 @@ void Game() {
 
     int savedLength = Global::length;
     int score = TRIES_COUNT;
-    int maxResult = (TRIES_COUNT-1)*savedLength;
+    int maxResult = TRIES_COUNT*savedLength;
 
     int index = 0, count = 0, result = 0;
 
@@ -99,10 +99,12 @@ void Game() {
 
         std::cout << question << std::endl;
         
-        while (score-- > 0) {
+        while (score > 0) {
             std::cin >> input;
 
             if (input != answer) {
+                score--;
+
                 switch (score) {
                     case 3: {
                         std::cout << answer.front();
@@ -120,7 +122,7 @@ void Game() {
                     case 1: {
                         std::cout << answer.front() << answer[1];
                         for (size_t i = 2; i < answer.length()-2; i++) putchar('*');
-                        std::cout << answer[answer.length()-1] << answer.back();
+                        std::cout << answer[answer.length()-2] << answer.back();
                         break;
                     }
                 }
@@ -138,7 +140,12 @@ void Game() {
         else
             std::cout << "Wrong! (";
         
-        std::cout << count << "/" << savedLength << ")" << std::endl << std::endl;
+        std::cout << count << "/" << savedLength << ")" << std::endl;
+
+        if (score <= 0)
+            std::cout << "Correct form: " << answer << std::endl;
+        
+        std::cout << std::endl;
 
         Global::leftWords.erase(Global::leftWords.begin()+index);
         Global::rightWords.erase(Global::rightWords.begin()+index);
