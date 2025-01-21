@@ -25,11 +25,15 @@ else()
     set(USE_PCH ON)
 endif()
 
-set(PCH_PATH "${CMAKE_SOURCE_DIR}/include/common")
+set(INCLUDE_PATH "${CMAKE_SOURCE_DIR}/include")
+set(PCH_PATH "${INCLUDE_PATH}/common")
 set(PCH_HEADER "${PCH_PATH}/PCH.hpp")
 set(SOURCE_PATH "${CMAKE_SOURCE_DIR}/source")
 
-include_directories("${PCH_PATH}")
+include_directories(
+    "${INCLUDE_PATH}"
+    "${PCH_PATH}"
+)
 file(GLOB_RECURSE SOURCE_FILES "${SOURCE_PATH}/*.cpp")
 
 add_executable(game "${SOURCE_FILES}")
